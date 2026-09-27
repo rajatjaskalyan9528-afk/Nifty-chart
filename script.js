@@ -1,4 +1,4 @@
-/ 1. Chart Container Setup
+// 1. Chart Container Setup
 const chartContainer = document.getElementById('chart');
 
 const chart = LightweightCharts.createChart(chartContainer, {
@@ -26,7 +26,7 @@ const candlestickSeries = chart.addCandlestickSeries({
     wickDownColor: '#ef4444',
 });
 
-// 2. NIFTY 50 Real Data Fetch
+// 2. Fetch NIFTY 50 Data via Working Proxy
 async function loadNiftyData() {
     try {
         const targetUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI?interval=1d&range=6mo';
@@ -68,4 +68,3 @@ window.addEventListener('resize', () => {
         height: window.innerHeight,
     });
 });
-            
