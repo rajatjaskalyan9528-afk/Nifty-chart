@@ -1,4 +1,4 @@
-// 1. Chart Container
+// 1. Chart Container Setup
 const chartContainer = document.getElementById('chart');
 
 const chart = LightweightCharts.createChart(chartContainer, {
@@ -26,28 +26,40 @@ const candlestickSeries = chart.addCandlestickSeries({
     wickDownColor: '#ef4444',
 });
 
-// 2. Direct Reliable Public API
-async function loadChartData() {
+// 2. NIFTY 50 Real Data Fetch
+async function loadNiftyData() {
     try {
-        const response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=100');
-        const data = await response.json();
-        
-        const formattedData = data.map(d => ({
-            time: Math.floor(d[0] / 1000),
-            open: parseFloat(d[1]),
-            high: parseFloat(d[2]),
-            low: parseFloat(d[3]),
-            close: parseFloat(d[4]),
-        }));
+        const targetUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI?interval=1d&range=6mo';
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+
+        const response = await fetch(proxyUrl);
+        const json = await response.json();
+        const result = json.chart.result[0];
+
+        const timestamps = result.timestamp;
+        const quotes = result.indicators.quote[0];
+
+        const formattedData = [];
+        for (let i = 0; i < timestamps.length; i++) {
+            if (quotes.open[i] && quotes.high[i] && quotes.low[i] && quotes.close[i]) {
+                formattedData.push({
+                    time: timestamps[i],
+                    open: parseFloat(quotes.open[i].toFixed(2)),
+                    high: parseFloat(quotes.high[i].toFixed(2)),
+                    low: parseFloat(quotes.low[i].toFixed(2)),
+                    close: parseFloat(quotes.close[i].toFixed(2)),
+                });
+            }
+        }
 
         candlestickSeries.setData(formattedData);
         chart.timeScale().fitContent();
     } catch (err) {
-        console.error("Fetch Error:", err);
+        console.error("NIFTY Fetch Error:", err);
     }
 }
 
-loadChartData();
+loadNiftyData();
 
 // Responsive Resize
 window.addEventListener('resize', () => {
