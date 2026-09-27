@@ -1,4 +1,4 @@
-// 1. Chart Container Setup
+/ 1. Chart Container Setup
 const chartContainer = document.getElementById('chart');
 
 const chart = LightweightCharts.createChart(chartContainer, {
@@ -68,3 +68,4 @@ window.addEventListener('resize', () => {
         height: window.innerHeight,
     });
 });
+            
